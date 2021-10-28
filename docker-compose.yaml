@@ -1,0 +1,29 @@
+version: '3'
+#  retrigger checks
+
+services:
+  db:
+    image: postgres
+    container_name: db
+    environment:
+      APP_SECRET: postgres
+      POSTGRES_DB: app
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: app
+    volumes:
+    - .:/app
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db/app
+      SECRET_KEY_BASE: 5x33WSBXxVt73LWmf9rPHdKYV6VdQe9b
+    ports:
+    - 3000:3000
+    links:
+    - db:db
+    depends_on:
+    - db

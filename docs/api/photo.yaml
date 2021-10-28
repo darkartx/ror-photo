@@ -1,0 +1,511 @@
+openapi: 3.1.0
+info:
+  title: photo
+  version: '1.0'
+  summary: Photo rest api
+  description: Photo rest api documentation
+  contact:
+    name: darkartx
+    url: 'https://github.com/darkartx'
+servers:
+  - url: 'http://localhost:3000/api/v1'
+    description: local
+paths:
+  /photos:
+    get:
+      summary: Get all user photos
+      tags:
+        - photos
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Photo'
+                    readOnly: true
+                  jsonapi:
+                    type: object
+                    properties:
+                      version:
+                        type: string
+                        default: '1.0'
+                        readOnly: true
+                    readOnly: true
+                required:
+                  - data
+                readOnly: true
+              examples:
+                OK:
+                  value:
+                    data:
+                      - id: 1
+                        type: photos
+                        attributes:
+                          title: string
+                          views: 0
+                          created_at: '2019-08-24T14:15:22Z'
+                          updated_at: '2019-08-24T14:15:22Z'
+                          image_original: 'http://localhost:3000/path/to/image.png'
+                          image: 'http://localhost:3000/path/to/image.webm'
+                          image_preview: 'http://localhost:3000/path/to/image.png'
+                        links:
+                          self: 'http://locahost:3000/api/v1/photos/1'
+                    jsonapi:
+                      version: '1.0'
+      operationId: get-photos
+      description: Get all user photos
+      parameters: []
+    post:
+      summary: Create new photo
+      operationId: post-photos
+      responses:
+        '201':
+          description: Created
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Photo'
+                  jsonapi:
+                    type: object
+                    properties:
+                      version:
+                        type: string
+                        example: '1.0'
+                        readOnly: true
+                    readOnly: true
+                required:
+                  - data
+              examples:
+                Created:
+                  value:
+                    data:
+                      id: 1
+                      type: photos
+                      attributes:
+                        title: string
+                        views: 0
+                        created_at: '2019-08-24T14:15:22Z'
+                        updated_at: '2019-08-24T14:15:22Z'
+                        image_original: 'http://localhost:3000/path/to/image.png'
+                        image: 'http://localhost:3000/path/to/image.webm'
+                        image_preview: 'http://localhost:3000/path/to/image.png'
+                      links:
+                        self: 'http://locahost:3000/api/v1/photos/1'
+                    jsonapi:
+                      version: '1.0'
+        '422':
+          description: Unprocessable Entity (WebDAV)
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                          readOnly: true
+                        detail:
+                          type: string
+                          readOnly: true
+                      readOnly: true
+                    readOnly: true
+                  jsonapi:
+                    type: object
+                    properties:
+                      version:
+                        type: string
+                        example: '1.0'
+                        readOnly: true
+                    readOnly: true
+                required:
+                  - errors
+                readOnly: true
+      description: Create and upload new photo
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                photo:
+                  type: object
+                  required:
+                    - title
+                    - image_original
+                  properties:
+                    title:
+                      type: string
+                      minLength: 3
+                      writeOnly: true
+                    image_original:
+                      type: string
+                      format: uri
+                      example: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+P//PwAGBAL/VJiKjgAAAABJRU5ErkJggg=='
+                      writeOnly: true
+                  writeOnly: true
+              required:
+                - photo
+              writeOnly: true
+        description: image_original should been base64 encoded image in jpg or png format
+      tags:
+        - photos
+    parameters: []
+  '/photos/{photo_id}':
+    get:
+      summary: Get photo
+      tags:
+        - photos
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Photo'
+                  jsonapi:
+                    type: object
+                    properties:
+                      version:
+                        type: string
+                        default: '1.0'
+                        readOnly: true
+                    readOnly: true
+                required:
+                  - data
+                readOnly: true
+              examples:
+                OK:
+                  value:
+                    data:
+                      id: 1
+                      type: photos
+                      attributes:
+                        title: string
+                        views: 0
+                        created_at: '2019-08-24T14:15:22Z'
+                        updated_at: '2019-08-24T14:15:22Z'
+                        image_original: 'http://localhost:3000/path/to/image.png'
+                        image: 'http://localhost:3000/path/to/image.webm'
+                        image_preview: 'http://localhost:3000/path/to/image.png'
+                      links:
+                        self: 'http://locahost:3000/api/v1/photos/1'
+                    jsonapi:
+                      version: '1.0'
+      operationId: get-photo
+      description: Get user photo by id
+      parameters: []
+    put:
+      summary: Update photo
+      operationId: put-photos
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Photo'
+                  jsonapi:
+                    type: object
+                    properties:
+                      version:
+                        type: string
+                        example: '1.0'
+                        readOnly: true
+                    readOnly: true
+                required:
+                  - data
+                readOnly: true
+              examples:
+                OK:
+                  value:
+                    data:
+                      id: 1
+                      type: photos
+                      attributes:
+                        title: string
+                        views: 0
+                        created_at: '2019-08-24T14:15:22Z'
+                        updated_at: '2019-08-24T14:15:22Z'
+                        image_original: 'http://localhost:3000/path/to/image.png'
+                        image: 'http://localhost:3000/path/to/image.webm'
+                        image_preview: 'http://localhost:3000/path/to/image.png'
+                      links:
+                        self: 'http://locahost:3000/api/v1/photos/1'
+                    jsonapi:
+                      version: '1.0'
+        '422':
+          description: Unprocessable Entity (WebDAV)
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                          readOnly: true
+                        detail:
+                          type: string
+                          readOnly: true
+                      readOnly: true
+                  jsonapi:
+                    type: object
+                    properties:
+                      version:
+                        type: string
+                        readOnly: true
+                    readOnly: true
+                required:
+                  - errors
+                readOnly: true
+      tags:
+        - photos
+      description: Update user photo by id
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                photo:
+                  type: object
+                  required:
+                    - title
+                  properties:
+                    title:
+                      type: string
+                      minLength: 3
+                      writeOnly: true
+                  writeOnly: true
+              required:
+                - photo
+              writeOnly: true
+    parameters:
+      - schema:
+          type: integer
+        name: photo_id
+        in: path
+        required: true
+        description: Photo id
+    patch:
+      summary: Update photo
+      operationId: patch-photos
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Photo'
+                  jsonapi:
+                    type: object
+                    properties:
+                      version:
+                        type: string
+                        example: '1.0'
+                        readOnly: true
+                    readOnly: true
+                required:
+                  - data
+                readOnly: true
+              examples:
+                OK:
+                  value:
+                    data:
+                      id: 1
+                      type: photos
+                      attributes:
+                        title: string
+                        views: 0
+                        created_at: '2019-08-24T14:15:22Z'
+                        updated_at: '2019-08-24T14:15:22Z'
+                        image_original: 'http://localhost:3000/path/to/image.png'
+                        image: 'http://localhost:3000/path/to/image.webm'
+                        image_preview: 'http://localhost:3000/path/to/image.png'
+                      links:
+                        self: 'http://locahost:3000/api/v1/photos/1'
+                    jsonapi:
+                      version: '1.0'
+        '422':
+          description: Unprocessable Entity (WebDAV)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                          readOnly: true
+                        detail:
+                          type: string
+                          readOnly: true
+                      readOnly: true
+                  jsonapi:
+                    type: object
+                    properties:
+                      version:
+                        type: string
+                        readOnly: true
+                    readOnly: true
+                required:
+                  - errors
+                readOnly: true
+      tags:
+        - photos
+      description: Update user photo by id
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                photo:
+                  type: object
+                  required:
+                    - title
+                  properties:
+                    title:
+                      type: string
+                      minLength: 3
+                      writeOnly: true
+                  writeOnly: true
+              required:
+                - photo
+              writeOnly: true
+    delete:
+      summary: Remove photo
+      operationId: delete-photos-photo_id
+      responses:
+        '204':
+          description: No Content
+      tags:
+        - photos
+      description: Remove user photo by id
+components:
+  schemas:
+    Photo:
+      type: object
+      title: Photo
+      description: Output photo model
+      properties:
+        id:
+          type: integer
+          example: 1
+          format: int64
+          readOnly: true
+        type:
+          type: string
+          enum:
+            - photos
+          example: photos
+          readOnly: true
+        attributes:
+          $ref: '#/components/schemas/PhotoAttributes'
+        links:
+          type: object
+          required:
+            - self
+          properties:
+            self:
+              format: uri
+              example: 'http://locahost:3000/api/v1/photos/1'
+              type: string
+              readOnly: true
+          readOnly: true
+      required:
+        - id
+        - type
+        - attributes
+        - links
+      readOnly: true
+      x-tags:
+        - photos
+    PhotoAttributes:
+      title: PhotoAttributes
+      type: object
+      examples:
+        - title: string
+          views: 0
+          created_at: '2019-08-24T14:15:22Z'
+          updated_at: '2019-08-24T14:15:22Z'
+          image_original: 'http://localhost:3000/path/to/image.png'
+          image: 'http://localhost:3000/path/to/image.webm'
+          image_preview: 'http://localhost:3000/path/to/image.png'
+      properties:
+        title:
+          type: string
+          readOnly: true
+        views:
+          type: integer
+          example: 0
+          default: 0
+          format: int64
+          minimum: 0
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        image_original:
+          type: string
+          format: uri
+          example: 'http://localhost:3000/path/to/image.png'
+          readOnly: true
+        image:
+          type: string
+          example: 'http://localhost:3000/path/to/image.webm'
+          format: uri
+          readOnly: true
+        image_preview:
+          type: string
+          example: 'http://localhost:3000/path/to/image.png'
+          format: uri
+          readOnly: true
+      required:
+        - title
+        - views
+        - created_at
+        - updated_at
+      x-tags:
+        - photos
+  securitySchemes: {}
+  requestBodies: {}
+tags:
+  - name: photos
